@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Title>CustomXpoProviders</Title>
+    <Description>Custom XPO implementation that preserves relationships during soft delete (deferred deletion) operations</Description>
+    <Authors>Your Name</Authors>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- DevExpress XPO - adjust version as needed -->
+    <PackageReference Include="DevExpress.Xpo" Version="25.1.*" />
+    
+    <!-- PostgreSQL provider (Npgsql) -->
+    <PackageReference Include="Npgsql" Version="8.0.*" />
+    
+    <!-- Required for non-string resources in DevExpress assemblies -->
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Exclude test-related and incompatible files from the library -->
+    <Compile Remove="Program.cs" />
+    <Compile Remove="Examples.cs" />
+  <Compile Remove="PreserveRelationshipsSession.cs" />
+  <!-- Exclude the XAF-specific provider from the library; it will be provided by the Module project which has XAF references -->
+  <Compile Remove="PreserveRelationshipsObjectSpace.cs" />
+    
+    <None Include="Program.cs" />
+    <None Include="Examples.cs" />
+    <None Include="PreserveRelationshipsSession.cs" />
+    
+  <!-- PreserveRelationshipsObjectSpace.cs is included by SDK default; no explicit Compile needed -->
+  </ItemGroup>
+
+</Project>
