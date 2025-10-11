@@ -38,10 +38,10 @@ public class Updater : ModuleUpdater {
 
         ObjectSpace.CommitChanges(); //This line persists created object(s).
 
-        var serviceProvider = ObjectSpace.ServiceProvider;
+        var serviceProvider = GetServiceProviderForObjectSpace(ObjectSpace);
         // In some update contexts (design-time or when the application DI container isn't available)
-        // the ObjectSpace.ServiceProvider may be null. In that case skip user auto-creation.
-        if (serviceProvider == null) {
+        // the ServiceProvider may be null. In that case skip user auto-creation.
+        if(serviceProvider == null) {
             return;
         }
 
@@ -102,5 +102,33 @@ public class Updater : ModuleUpdater {
             defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create, SecurityPermissionState.Allow);
         }
         return defaultRole;
+    }
+    private IServiceProvider GetServiceProviderForObjectSpace(IObjectSpace objectSpace) {
+        if(objectSpace == null) return null;
+        // First, try the ObjectSpace.ServiceProvider (available in DI-aware ObjectSpaces)
+        try {
+            var sp = objectSpace.ServiceProvider;
+            if(sp != null) return sp;
+        }
+        catch { }
+
+        // If the ObjectSpace is an XPO-based ObjectSpace, try to get the Session.ServiceProvider
+        var xpObjectSpace = objectSpace as DevExpress.ExpressApp.Xpo.XPObjectSpace;
+        if(xpObjectSpace != null) {
+            try {
+                var sp = xpObjectSpace.ServiceProvider;
+                if(sp != null) return sp;
+            }
+            catch { }
+        }
+
+        // Unable to resolve a service provider in this context
+        // As a last resort, use an ambient ServiceProvider set by the host when running DB updates
+        try {
+            var ambient = ServiceProviderAccessor.Current;
+            if(ambient != null) return ambient;
+        }
+        catch { }
+        return null;
     }
 }

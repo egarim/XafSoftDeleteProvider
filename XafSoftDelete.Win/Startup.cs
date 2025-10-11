@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using DevExpress.ExpressApp;
+using Microsoft.Extensions.DependencyInjection;
 using DevExpress.ExpressApp.ApplicationBuilder;
 using DevExpress.ExpressApp.Win.ApplicationBuilder;
 using DevExpress.ExpressApp.Security;
@@ -30,9 +31,20 @@ public class ApplicationBuilder : IDesignTimeApplicationFactory {
             })
             .Add<XafSoftDelete.Module.XafSoftDeleteModule>()
             .Add<XafSoftDeleteWinModule>();
+        var dataStoreProviderManager = new DevExpress.ExpressApp.ApplicationBuilder.DataStoreProviderManager();
         builder.ObjectSpaceProviders
-            .AddSecuredXpo((application, options) => {
+            .AddSecuredXpo((serviceProvider, options) => {
                 options.ConnectionString = connectionString;
+                options.ThreadSafe = true;
+                options.UseSharedDataStoreProvider = true;
+                // Create the custom provider using the shared data store provider when the application builder provides context
+                options.CustomCreateObjectSpaceProvider = (context) => {
+                    var dataStoreProvider = dataStoreProviderManager.GetSharedDataStoreProvider(options.ConnectionString, true);
+                    // Use the DI context's service provider when available (may be null in some hosts)
+                    return new XafSoftDelete.Module.PreserveRelationshipsModuleProvider(context?.ServiceProvider, dataStoreProvider) {
+                        PreserveRelationshipsOnSoftDelete = true
+                    };
+                };
             })
             .AddNonPersistent();
         builder.Security
@@ -63,6 +75,14 @@ public class ApplicationBuilder : IDesignTimeApplicationFactory {
 #endif
         });
         var winApplication = builder.Build();
+        try {
+            // Build a service provider from the configured services and set it as a global fallback for the updater
+            var sp = builder.Services.BuildServiceProvider();
+            XafSoftDelete.Module.ServiceProviderAccessor.Global = sp;
+        }
+        catch {
+            // ignore if building provider fails for design-time scenarios
+        }
         return winApplication;
     }
 

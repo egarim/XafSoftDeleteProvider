@@ -20,6 +20,36 @@ public class XafSoftDeleteWindowsFormsApplication : WinApplication {
         DatabaseVersionMismatch += XafSoftDeleteWindowsFormsApplication_DatabaseVersionMismatch;
         CustomizeLanguagesList += XafSoftDeleteWindowsFormsApplication_CustomizeLanguagesList;
     }
+    //    protected override void CreateDefaultObjectSpaceProvider(CreateCustomObjectSpaceProviderEventArgs args) {
+    //    // Use the module provider that wraps the PreserveRelationshipsDataLayer
+    //    // Prefer the existing connection/connectionString passed by the framework
+    //    // Try to pass the application as an IServiceProvider so the provider can populate UnitOfWork/XPObjectSpace.ServiceProvider
+    //    IServiceProvider appServiceProvider = this as IServiceProvider;
+    //    if(args.Connection != null) {
+    //        if(appServiceProvider != null) {
+    //            args.ObjectSpaceProviders.Add(new XafSoftDelete.Module.PreserveRelationshipsModuleProvider(appServiceProvider, args.ConnectionString, args.Connection) {
+    //                PreserveRelationshipsOnSoftDelete = true
+    //            });
+    //        }
+    //        else {
+    //            args.ObjectSpaceProviders.Add(new XafSoftDelete.Module.PreserveRelationshipsModuleProvider(args.ConnectionString, args.Connection) {
+    //                PreserveRelationshipsOnSoftDelete = true
+    //            });
+    //        }
+    //    }
+    //    else {
+    //        if(appServiceProvider != null) {
+    //            args.ObjectSpaceProviders.Add(new XafSoftDelete.Module.PreserveRelationshipsModuleProvider(appServiceProvider, args.ConnectionString, args.Connection) {
+    //                PreserveRelationshipsOnSoftDelete = true
+    //            });
+    //        }
+    //        else {
+    //            args.ObjectSpaceProviders.Add(new XafSoftDelete.Module.PreserveRelationshipsModuleProvider(args.ConnectionString, args.Connection) {
+    //                PreserveRelationshipsOnSoftDelete = true
+    //            });
+    //        }
+    //    }
+    //}
     private void XafSoftDeleteWindowsFormsApplication_CustomizeLanguagesList(object sender, CustomizeLanguagesListEventArgs e) {
         string userLanguageName = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
         if(userLanguageName != "en-US" && e.Languages.IndexOf(userLanguageName) == -1) {
