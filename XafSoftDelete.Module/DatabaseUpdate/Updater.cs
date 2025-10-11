@@ -38,7 +38,14 @@ public class Updater : ModuleUpdater {
 
         ObjectSpace.CommitChanges(); //This line persists created object(s).
 
-        UserManager userManager = ObjectSpace.ServiceProvider.GetRequiredService<UserManager>();
+        var serviceProvider = ObjectSpace.ServiceProvider;
+        // In some update contexts (design-time or when the application DI container isn't available)
+        // the ObjectSpace.ServiceProvider may be null. In that case skip user auto-creation.
+        if (serviceProvider == null) {
+            return;
+        }
+
+        UserManager userManager = serviceProvider.GetRequiredService<UserManager>();
 
         // If a user named 'User' doesn't exist in the database, create this user
         if(userManager.FindUserByName<ApplicationUser>(ObjectSpace, "User") == null) {

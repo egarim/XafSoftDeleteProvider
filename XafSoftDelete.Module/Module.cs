@@ -36,15 +36,7 @@ public sealed class XafSoftDeleteModule : ModuleBase {
     }
     public override void Setup(XafApplication application) {
         base.Setup(application);
-        // Register our custom provider at application startup so that XAF uses the
-        // PreserveRelationshipsDataLayer for ObjectSpace creation by default.
-        application.CreateCustomObjectSpaceProvider += (s, e) => {
-            // Replace default providers with one that uses PreserveRelationshipsDataLayer
-            e.ObjectSpaceProviders.Clear();
-            e.ObjectSpaceProviders.Add(new PreserveRelationshipsObjectSpaceProvider(e.ConnectionString, e.Connection) {
-                PreserveRelationshipsOnSoftDelete = true
-            });
-        };
+        // No custom provider registered here to keep the app using the default XAF provider.
     }
     public override void CustomizeTypesInfo(ITypesInfo typesInfo) {
         base.CustomizeTypesInfo(typesInfo);
