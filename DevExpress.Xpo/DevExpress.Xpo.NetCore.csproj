@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>DevExpress.Xpo.v25.1</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RootNamespace>DevExpress.Xpo</RootNamespace>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\..\DevExpress.Key\StrongKey.snk</AssemblyOriginatorKeyFile>
+    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
+    <EnableDefaultItems>false</EnableDefaultItems>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NugetLocalCache>$(USERPROFILE)\.nuget\packages\devexpress.design.nuget\25.1.0\lib\$(TargetFramework)-windows7.0\</NugetLocalCache>
+    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))'=='true'">true</IsWindows>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AliasExpander.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="AssociationList.cs" />
+    <Compile Include="AsyncServerMode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="AsyncServerModeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Attributes.cs" />
+    <Compile Include="Collections.cs" />
+    <Compile Include="CriteriaAnalyzer.cs" />
+    <Compile Include="DataLayer.cs" />
+    <Compile Include="DataView.cs" />
+    <Compile Include="DBUpdate.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="ExtendableExpressionEvaluator.cs" />
+    <Compile Include="Generator.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="InTransactionLoader.cs" />
+    <Compile Include="JsonConverters.cs" />
+    <Compile Include="Loader.cs" />
+    <Compile Include="Logger\LogClient.cs" />
+    <Compile Include="Logger\LoggerBase.cs" />
+    <Compile Include="Logger\LogHelpers.cs" />
+    <Compile Include="Logger\LogInterface.cs" />
+    <Compile Include="Logger\LogServer.cs" />
+    <Compile Include="Logger\NamedPipeLogServer.cs" />
+    <Compile Include="Metadata.cs" />
+    <Compile Include="NestedSession.cs" />
+    <Compile Include="Object.cs" />
+    <Compile Include="ObjectCache.cs" />
+    <Compile Include="ObjectLayer.cs" />
+    <Compile Include="Paging.cs" />
+    <Compile Include="Providers\Access.cs" />
+    <Compile Include="Providers\Advantage.cs" />
+    <Compile Include="Providers\Asa.cs" />
+    <Compile Include="Providers\Ase.cs" />
+    <Compile Include="Providers\CachedDataStoreService.cs" />
+    <Compile Include="Providers\ConnectionParameter.cs" />
+    <Compile Include="Providers\DataStoreService.cs" />
+    <Compile Include="Providers\DB2.cs" />
+    <Compile Include="Providers\DroneDataStore.cs" />
+    <Compile Include="Providers\Firebird.cs" />
+    <Compile Include="Providers\Hana.cs" />
+    <Compile Include="Providers\IConnectionPage.cs" />
+    <Compile Include="Providers\InMemory.cs" />
+    <Compile Include="Providers\InMemoryFull.cs" />
+    <Compile Include="Providers\InMemorySet.cs" />
+    <Compile Include="Providers\MsSql.cs" />
+    <Compile Include="Providers\MsSqlCE.cs" />
+    <Compile Include="Providers\MySql.cs" />
+    <Compile Include="Providers\NexusDB.cs" />
+    <Compile Include="Providers\ODP.cs" />
+    <Compile Include="Providers\Oracle.cs" />
+    <Compile Include="Providers\PervasiveSql.cs" />
+    <Compile Include="Providers\PostgreSql.cs" />
+    <Compile Include="Providers\Reg.cs" />
+    <Compile Include="Providers\SerializableObjectLayerService.cs" />
+    <Compile Include="Providers\SQLite.cs" />
+    <Compile Include="Providers\VistaDB.cs" />
+    <Compile Include="Providers\WebAPI.cs" />
+    <Compile Include="Purge.cs" />
+    <Compile Include="Res.cs" />
+    <Compile Include="SecurityObjectLayer.cs" />
+    <Compile Include="SerializableObjectLayer.cs" />
+    <Compile Include="SerializableObjectLayerHelpers.cs" />
+    <Compile Include="ServerModeGridSource.cs" />
+    <Compile Include="ServerModeView.cs" />
+    <Compile Include="Services\IInfrastructure.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="SessionObjectLayer.cs" />
+    
+    <Compile Include="View.cs" />
+    <Compile Include="XPBindingSource.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="XpoDataSource.cs" />
+    <Compile Include="XpoDefault.cs" />
+    <Compile Include="XpoLinq.cs" />
+    <Compile Include="ServiceCollectionExtensions.cs" />
+    <EmbeddedResource Include="ToolboxIcons\XPServerModeView.bmp">
+      <LogicalName>DevExpress.Xpo.XPServerModeView.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XpoDataSource.bmp">
+      <LogicalName>DevExpress.Xpo.XpoDataSource.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\ExplicitUnitOfWork.bmp">
+      <LogicalName>DevExpress.Xpo.ExplicitUnitOfWork.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\Session.bmp">
+      <LogicalName>DevExpress.Xpo.Session.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\UnitOfWork.bmp">
+      <LogicalName>DevExpress.Xpo.UnitOfWork.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XPCollection.bmp">
+      <LogicalName>DevExpress.Xpo.XPCollection.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XPDataView.bmp">
+      <LogicalName>DevExpress.Xpo.XPDataView.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XPInstantFeedbackSource.bmp">
+      <LogicalName>DevExpress.Xpo.XPInstantFeedbackSource.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XPPageSelector.bmp">
+      <LogicalName>DevExpress.Xpo.XPPageSelector.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XPServerCollectionSource.bmp">
+      <LogicalName>DevExpress.Xpo.XPServerCollectionSource.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XPView.bmp">
+      <LogicalName>DevExpress.Xpo.XPView.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XPBindingSource.bmp">
+      <LogicalName>DevExpress.Xpo.XPBindingSource.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolboxIcons\XPInstantFeedbackView.bmp">
+      <LogicalName>DevExpress.Xpo.XPInstantFeedbackView.bmp</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Messages.resx">
+      
+    </EmbeddedResource>
+    <EmbeddedResource Include="Messages.es.resx" />
+    <EmbeddedResource Include="Messages.de.resx" />
+    <EmbeddedResource Include="Messages.ja.resx" />
+    <EmbeddedResource Include="PropertyNamesRes.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XPOMetadata.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="System.Drawing.Common" />
+    <PackageReference Include="System.ServiceModel.Http" />
+    <PackageReference Include="System.ServiceModel.NetTcp" />
+  </ItemGroup>
+  <PropertyGroup>
+      <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v25.1">
+      <HintPath>..\..\..\..\Bin\NetCore\DevExpress.Data.v25.1.dll</HintPath>
+    <Private>False</Private></Reference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <DefineConstants>$(DefineConstants);DXRESTRICTED</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;DXCommon;Debug;DEBUGTEST;NETSTANDARD2_0</DefineConstants>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <OutDir>..\..\..\..\Bin\NetCore\</OutDir>
+    <DebugType>full</DebugType>
+    <DebugSymbols>True</DebugSymbols>	
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);DXCommon</DefineConstants>
+    <OutDir>..\..\..\..\Bin\NetCore\</OutDir>
+  </PropertyGroup>  
+  <PropertyGroup>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <AnalysisLevel>8.0-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(IsWindows)'=='true'">
+    <Exec Command="if exist $(NugetLocalCache)$(AssemblyName).dll (xcopy $(TargetDir)$(AssemblyName).dll $(NugetLocalCache) /y)" />
+  </Target>
+</Project>

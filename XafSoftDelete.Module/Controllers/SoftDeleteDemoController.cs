@@ -85,7 +85,7 @@ namespace XafSoftDelete.Module.Controllers
                 }
 
                 // Load the object into the session
-                var obj = session.GetObjectByKey(classInfo.ClassType, selected.Oid);
+                var obj = session.GetObjectByKey(classInfo.ClassType, selected.Key);
                 if (obj == null) {
                     Application.ShowViewStrategy.ShowMessage("Deleted object not found in session.", InformationType.Error);
                     return;

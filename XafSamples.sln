@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XafSoftDelete.Module", "Xaf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XafSoftDelete.Win", "XafSoftDelete.Win\XafSoftDelete.Win.csproj", "{7A9BA384-50C4-BE38-A114-30FB702B5BF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XafSoftDelete.Blazor.Server", "XafSoftDelete.Blazor.Server\XafSoftDelete.Blazor.Server.csproj", "{9543D69C-0784-C4F6-B584-00A318B5164B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomXpoProviders", "CustomXpoProviders\CustomXpoProviders.csproj", "{59803E2A-1836-36C8-680E-129A71544D08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomXpoProviders.Tests", "CustomXpoProviders.Tests\CustomXpoProviders.Tests.csproj", "{1A896021-7F00-CD48-44BE-31760F584EA1}"
@@ -26,10 +24,6 @@ Global
 		{7A9BA384-50C4-BE38-A114-30FB702B5BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A9BA384-50C4-BE38-A114-30FB702B5BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A9BA384-50C4-BE38-A114-30FB702B5BF1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9543D69C-0784-C4F6-B584-00A318B5164B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9543D69C-0784-C4F6-B584-00A318B5164B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9543D69C-0784-C4F6-B584-00A318B5164B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9543D69C-0784-C4F6-B584-00A318B5164B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59803E2A-1836-36C8-680E-129A71544D08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{59803E2A-1836-36C8-680E-129A71544D08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59803E2A-1836-36C8-680E-129A71544D08}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -26,12 +26,14 @@
     <!-- Exclude test-related and incompatible files from the library -->
     <Compile Remove="Program.cs" />
     <Compile Remove="Examples.cs" />
+    <Compile Remove="SqlReproRunner.cs" />
   <Compile Remove="PreserveRelationshipsSession.cs" />
   <!-- Exclude the XAF-specific provider from the library; it will be provided by the Module project which has XAF references -->
   <Compile Remove="PreserveRelationshipsObjectSpace.cs" />
     
     <None Include="Program.cs" />
     <None Include="Examples.cs" />
+    <None Include="SqlReproRunner.cs" />
     <None Include="PreserveRelationshipsSession.cs" />
     
   <!-- PreserveRelationshipsObjectSpace.cs is included by SDK default; no explicit Compile needed -->

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.devexpress.com/products/xpo/schemas/1.9/xpometadata.xsd" xmlns="http://www.devexpress.com/products/xpo/schemas/1.9/xpometadata.xsd" xmlns:mstns="http://www.devexpress.com/products/xpo/schemas/1.9/xpometadata.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:complexType name="Model">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="ClassInfoDescription" type="ClassInfoDescription"/>
+				<xs:element name="MemberInfoDescription" type="MemberInfoDescription"/>
+				<xs:element name="Class" type="Class"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Class">
+		<xs:sequence>
+			<xs:element name="Attributes" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="CustomAttribute" type="CustomAttribute"/>
+							<xs:element name="MapInheritance" type="MapInheritance"/>
+							<xs:element name="Persistent" type="Persistent"/>
+							<xs:element name="OptimisticLocking" type="OptimisticLocking"/>
+							<xs:element name="NonPersistent" type="NonPersistent"/>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Member" type="Member" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="classinfo" type="xs:string" use="optional"/>
+		<xs:attribute name="assembly" type="xs:string" use="optional"/>
+		<xs:attribute name="type" type="xs:string" use="required"/>
+		<xs:attribute name="baseassembly" type="xs:string" use="optional"/>
+		<xs:attribute name="basetype" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="Aggregated"/>
+	<xs:complexType name="NoForeignKey"/>
+	<xs:complexType name="Key">
+		<xs:attribute name="AutoGenerate" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="MapInheritance">
+		<xs:attribute name="MapType" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="Association">
+		<xs:attribute name="Name" type="xs:string" use="required"/>
+		<xs:attribute name="AssemblyName" type="xs:string"/>
+		<xs:attribute name="ElementTypeName" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="OptimisticLocking">
+		<xs:attribute name="Enabled" type="xs:boolean" use="optional"/>
+		<xs:attribute name="FieldName" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:simpleType name="SizeKind">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:pattern value="Unlimited"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:integer"/>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:complexType name="Size">
+		<xs:attribute name="Size" type="SizeKind" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ExplicitLoading">
+		<xs:attribute name="Depth" type="xs:integer" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="Delayed">
+		<xs:attribute name="FieldName" type="xs:string" use="required"/>
+		<xs:attribute name="GroupName" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="NonPersistent"/>
+	<xs:complexType name="DbType">
+		<xs:attribute name="DbColumnTypeName" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="NullValue">
+		<xs:attribute name="Value" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="Persistent">
+		<xs:attribute name="MapTo" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="ValueConverter">
+		<xs:attribute name="ConverterType" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="DisplayName">
+		<xs:attribute name="DisplayName" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="Indexed">
+		<xs:sequence>
+			<xs:element name="AdditionalFields" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="string" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Unique" type="xs:boolean"/>
+		<xs:attribute name="Name" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="CustomAttribute">
+		<xs:attribute name="Name" type="xs:string" use="required"/>
+		<xs:attribute name="Value" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="Member">
+		<xs:sequence>
+			<xs:element name="Attributes" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="CustomAttribute" type="CustomAttribute"/>
+							<xs:element name="Persistent" type="Persistent"/>
+							<xs:element name="NonPersistent" type="NonPersistent"/>
+							<xs:element name="Aggregated" type="Aggregated"/>
+							<xs:element name="NoForeignKey" type="NoForeignKey"/>
+							<xs:element name="Key" type="Key"/>
+							<xs:element name="Association" type="Association"/>
+							<xs:element name="Size" type="Size"/>
+							<xs:element name="Delayed" type="Delayed"/>
+							<xs:element name="Indexed" type="Indexed"/>
+							<xs:element name="DbType" type="DbType"/>
+							<xs:element name="ExplicitLoading" type="ExplicitLoading"/>
+							<xs:element name="NullValue" type="NullValue"/>
+							<xs:element name="ValueConverter" type="ValueConverter"/>
+							<xs:element name="DisplayName" type="DisplayName"/>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="memberinfo" type="xs:string" use="optional"/>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="type" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="ClassInfoDescription">
+		<xs:attribute name="classinfo" type="xs:string" use="required"/>
+		<xs:attribute name="assembly" type="xs:string" use="required"/>
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="MemberInfoDescription">
+		<xs:attribute name="memberinfo" type="xs:string" use="required"/>
+		<xs:attribute name="assembly" type="xs:string" use="required"/>
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:element name="Model" type="Model"/>
+</xs:schema>

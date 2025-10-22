@@ -34,9 +34,9 @@ namespace CustomXpoProviders {
             : base(layer, disposeOnDisconnect) { }
 
         /// <summary>
-        /// Override DeleteObject to customize behavior for objects with deferred deletion.
+        /// Override Delete to customize behavior for objects with deferred deletion.
         /// </summary>
-        protected virtual void DeleteObject(object theObject) {
+        public override void Delete(object theObject) {
             if(theObject == null)
                 return;
 
@@ -65,7 +65,9 @@ namespace CustomXpoProviders {
                     DeleteCorePreserveRelationships(classInfo, theObject);
                 } else {
                     // Use standard behavior (removes relationships)
-                    base.DeleteCore(classInfo, theObject);
+                    // Don't call base.Delete() here as it would recurse
+                    // Instead, we handle the standard soft delete inline
+                    DeleteCoreStandard(classInfo, theObject);
                 }
                 
                 TriggerObjectDeleted(theObject);
@@ -73,24 +75,14 @@ namespace CustomXpoProviders {
             }
             else {
                 // Hard delete - use standard behavior
-                if(IsObjectToDelete(theObject))
-                    return;
-                    
-                if(this is ExplicitUnitOfWork) {
-                    LoadAggregatedMembers(classInfo, theObject);
-                }
-                
-                TriggerObjectDeleting(theObject);
-                ProcessingProcess(objectsMarkedDeleted, theObject);
-                base.DeleteCore(classInfo, theObject);
-                TriggerObjectDeleted(theObject);
+                base.Delete(theObject);
             }
         }
 
         /// <summary>
-        /// Override DeleteObjectAsync to customize behavior for objects with deferred deletion.
+        /// Override DeleteAsync to customize behavior for objects with deferred deletion.
         /// </summary>
-        protected virtual async Task DeleteObjectAsync(object theObject, CancellationToken cancellationToken) {
+        public override async Task DeleteAsync(object theObject, CancellationToken cancellationToken) {
             if(theObject == null)
                 return;
 
@@ -112,24 +104,139 @@ namespace CustomXpoProviders {
                 if(PreserveRelationshipsOnSoftDelete) {
                     await DeleteCorePreserveRelationshipsAsync(classInfo, theObject, cancellationToken);
                 } else {
-                    await base.DeleteCoreAsync(classInfo, theObject, cancellationToken);
+                    await DeleteCoreStandardAsync(classInfo, theObject, cancellationToken);
                 }
                 
                 TriggerObjectDeleted(theObject);
                 await SaveAsync(theObject, cancellationToken);
             }
             else {
-                if(IsObjectToDelete(theObject))
-                    return;
-                    
-                if(this is ExplicitUnitOfWork) {
-                    await LoadAggregatedMembersAsync(classInfo, theObject, cancellationToken);
+                // Hard delete - use standard behavior
+                await base.DeleteAsync(theObject, cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Standard delete core that removes relationships (XPO default behavior).
+        /// This is used when PreserveRelationshipsOnSoftDelete is false.
+        /// </summary>
+        protected virtual void DeleteCoreStandard(XPClassInfo classInfo, object theObject) {
+            // Handle all associations - remove from collections (standard XPO behavior)
+            foreach(XPMemberInfo mi in classInfo.AssociationListProperties) {
+                if(mi.IsAggregated) {
+                    if(mi.IsCollection) {
+                        XPBaseCollection collection = (XPBaseCollection)mi.GetValue(theObject);
+                        CheckFilteredAggregateDeletion(theObject, mi, collection);
+                        using(var toDelete = LohPooled.ToListForDispose<object>(collection.Cast<object>(), collection.Count)) {
+                            for(int i = toDelete.Count - 1; i >= 0; i--) {
+                                Delete(toDelete[i]);
+                            }
+                            if(!collection.SelectDeleted) {
+                                for(int i = toDelete.Count - 1; i >= 0; i--) {
+                                    collection.BaseRemove(toDelete[i]);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        IList list = (IList)mi.GetValue(theObject);
+                        using(var toDelete = LohPooled.ToListForDispose<object>(list.Cast<object>(), list.Count)) {
+                            for(int i = toDelete.Count - 1; i >= 0; i--) {
+                                Delete(toDelete[i]);
+                            }
+                        }
+                    }
                 }
-                
-                TriggerObjectDeleting(theObject);
-                await ProcessingProcessAsync(objectsMarkedDeleted, theObject, cancellationToken);
-                await base.DeleteCoreAsync(classInfo, theObject, cancellationToken);
-                TriggerObjectDeleted(theObject);
+                else {
+                    // For non-aggregated associations, remove from collections (standard behavior)
+                    if(mi.IsCollection) {
+                        XPBaseCollection collection = (XPBaseCollection)mi.GetValue(theObject);
+                        if(!collection.SelectDeleted) {
+                            using(var toRemove = LohPooled.ToListForDispose<object>(collection.Cast<object>(), collection.Count)) {
+                                for(int i = toRemove.Count - 1; i >= 0; i--) {
+                                    collection.BaseRemove(toRemove[i]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Handle object properties
+            foreach(XPMemberInfo mi in classInfo.ObjectProperties) {
+                if(mi.IsAggregated) {
+                    object aggregated = mi.GetValue(theObject);
+                    Delete(aggregated);
+                }
+                else if(mi.IsAssociation) {
+                    // Clear association reference (standard behavior)
+                    mi.SetValue(theObject, null);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Async version of DeleteCoreStandard
+        /// </summary>
+        protected virtual async Task DeleteCoreStandardAsync(XPClassInfo classInfo, object theObject, CancellationToken cancellationToken) {
+            // Handle all associations
+            foreach(XPMemberInfo mi in classInfo.AssociationListProperties) {
+                if(mi.IsAggregated) {
+                    if(mi.IsCollection) {
+                        XPBaseCollection collection = (XPBaseCollection)mi.GetValue(theObject);
+                        CheckFilteredAggregateDeletion(theObject, mi, collection);
+                        if(!collection.IsLoaded) {
+                            await collection.LoadAsync(cancellationToken);
+                        }
+                        using(var toDelete = LohPooled.ToListForDispose<object>(collection.Cast<object>(), collection.Count)) {
+                            for(int i = toDelete.Count - 1; i >= 0; i--) {
+                                await DeleteAsync(toDelete[i], cancellationToken);
+                            }
+                            if(!collection.SelectDeleted) {
+                                for(int i = toDelete.Count - 1; i >= 0; i--) {
+                                    await collection.BaseRemoveAsync(toDelete[i], cancellationToken);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        IList list = (IList)mi.GetValue(theObject);
+                        await LoadAssociationListAsync(list, cancellationToken);
+                        using(var toDelete = LohPooled.ToListForDispose<object>(list.Cast<object>(), list.Count)) {
+                            for(int i = toDelete.Count - 1; i >= 0; i--) {
+                                await DeleteAsync(toDelete[i], cancellationToken);
+                            }
+                        }
+                    }
+                }
+                else {
+                    // For non-aggregated associations, remove from collections
+                    if(mi.IsCollection) {
+                        XPBaseCollection collection = (XPBaseCollection)mi.GetValue(theObject);
+                        if(!collection.SelectDeleted) {
+                            if(!collection.IsLoaded) {
+                                await collection.LoadAsync(cancellationToken);
+                            }
+                            using(var toRemove = LohPooled.ToListForDispose<object>(collection.Cast<object>(), collection.Count)) {
+                                for(int i = toRemove.Count - 1; i >= 0; i--) {
+                                    await collection.BaseRemoveAsync(toRemove[i], cancellationToken);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Handle object properties
+            foreach(XPMemberInfo mi in classInfo.ObjectProperties) {
+                if(mi.IsAggregated) {
+                    object aggregated = mi.GetValue(theObject);
+                    await DeleteAsync(aggregated, cancellationToken);
+                }
+                else if(mi.IsAssociation) {
+                    // Clear association reference
+                    mi.SetValue(theObject, null);
+                }
             }
         }
 
@@ -250,45 +357,7 @@ namespace CustomXpoProviders {
             }
         }
 
-        // Make Session's protected members accessible
-        private static System.Reflection.FieldInfo objectsMarkedDeletedField;
-        private IList objectsMarkedDeleted {
-            get {
-                if(objectsMarkedDeletedField == null) {
-                    objectsMarkedDeletedField = typeof(Session).GetField("objectsMarkedDeleted", 
-                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-                }
-                return (IList)objectsMarkedDeletedField.GetValue(this);
-            }
-        }
-
-        private static System.Reflection.MethodInfo processingProcessMethod;
-        private void ProcessingProcess(IList list, object obj) {
-            if(processingProcessMethod == null) {
-                processingProcessMethod = typeof(Session).GetMethod("ProcessingProcess", 
-                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            }
-            processingProcessMethod.Invoke(this, new[] { list, obj });
-        }
-
-        private static System.Reflection.MethodInfo processingProcessAsyncMethod;
-        private async Task ProcessingProcessAsync(IList list, object obj, CancellationToken ct) {
-            if(processingProcessAsyncMethod == null) {
-                processingProcessAsyncMethod = typeof(Session).GetMethod("ProcessingProcessAsync", 
-                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            }
-            await (Task)processingProcessAsyncMethod.Invoke(this, new object[] { list, obj, ct });
-        }
-
-        private static System.Reflection.MethodInfo loadAggregatedMembersMethod;
-        private void LoadAggregatedMembers(XPClassInfo classInfo, object theObject) {
-            if(loadAggregatedMembersMethod == null) {
-                loadAggregatedMembersMethod = typeof(Session).GetMethod("LoadAggregatedMembers", 
-                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            }
-            loadAggregatedMembersMethod.Invoke(this, new[] { classInfo, theObject });
-        }
-
+        // Make Session's protected members accessible through reflection
         private static System.Reflection.MethodInfo loadAggregatedMembersAsyncMethod;
         private async Task LoadAggregatedMembersAsync(XPClassInfo classInfo, object theObject, CancellationToken ct) {
             if(loadAggregatedMembersAsyncMethod == null) {
