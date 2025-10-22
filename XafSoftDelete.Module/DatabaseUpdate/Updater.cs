@@ -21,12 +21,9 @@ public class Updater : ModuleUpdater {
     }
     public override void UpdateDatabaseAfterUpdateSchema() {
         base.UpdateDatabaseAfterUpdateSchema();
-        //string name = "MyName";
-        //DomainObject1 theObject = ObjectSpace.FirstOrDefault<DomainObject1>(u => u.Name == name);
-        //if(theObject == null) {
-        //    theObject = ObjectSpace.CreateObject<DomainObject1>();
-        //    theObject.Name = name;
-        //}
+        
+        // Create test data: Customer and Order for soft delete testing
+        CreateTestCustomerAndOrder();
 
         // The code below creates users and roles for testing purposes only.
         // In production code, you can create users and assign roles to them automatically, as described in the following help topic:
@@ -130,5 +127,31 @@ public class Updater : ModuleUpdater {
         }
         catch { }
         return null;
+    }
+    
+    private void CreateTestCustomerAndOrder() {
+        // Check if we already have test customer
+        var customer = ObjectSpace.FirstOrDefault<Customer>(c => c.Name == "Test Customer");
+        if(customer == null) {
+            // Create a test customer
+            customer = ObjectSpace.CreateObject<Customer>();
+            customer.Name = "Test Customer";
+            customer.Email = "test@example.com";
+        }
+        
+        // Check if customer already has an order
+        var existingOrder = ObjectSpace.FirstOrDefault<Order>(o => o.Customer == customer);
+        if(existingOrder != null) {
+            return; // Test order already exists for this customer
+        }
+        
+        // Create a test order associated with the customer
+        var order = ObjectSpace.CreateObject<Order>();
+        order.Amount = 100.00m;
+        order.OrderDate = DateTime.Now;
+        order.Customer = customer; // Associate order with customer
+        
+        // Commit the changes
+        ObjectSpace.CommitChanges();
     }
 }

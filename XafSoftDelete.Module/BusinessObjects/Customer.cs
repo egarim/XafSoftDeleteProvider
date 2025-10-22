@@ -5,9 +5,18 @@ using DevExpress.Persistent.Base;
 namespace XafSoftDelete.Module.BusinessObjects {
     [DefaultClassOptions]
     [DeferredDeletion(true)]
-    public class Customer : XPObject {
+    public class Customer : XPCustomObject {
         public Customer(Session session) : base(session) { }
 
+
+        [Key(true)]
+        public Guid Key
+        {
+            get => key;
+            set => SetPropertyValue(nameof(Key), ref key, value);
+        }
+
+        Guid key;
         string name = string.Empty;
         public string Name {
             get => name;
